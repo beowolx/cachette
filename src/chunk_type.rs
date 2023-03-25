@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
-#[derive(Eq, PartialEq, Debug)]
-struct ChunkType {
+#[derive(Eq, Clone, PartialEq, Debug)]
+pub struct ChunkType {
   bytes: [u8; 4],
 }
 
