@@ -41,6 +41,8 @@ impl ChunkType {
 impl FromStr for ChunkType {
   type Err = &'static str;
 
+  /// Creates a new `ChunkType` from a string. The string must be exactly 4 characters long and
+  /// contain only ASCII alphabetic characters.
   fn from_str(s: &str) -> Result<Self, Self::Err> {
     if s.len() != 4 {
       return Err("Chunk type must be 4 characters long");
