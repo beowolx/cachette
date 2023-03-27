@@ -1,8 +1,9 @@
 use std::fmt;
+use std::path::PathBuf;
 
 use crate::chunk::Chunk;
-use crate::Result;
 use crate::Error;
+use crate::Result;
 
 #[derive(Debug)]
 pub struct Png {
@@ -18,7 +19,7 @@ impl Png {
   }
 
   /// Creates a `Png` from a file path
-  pub fn from_file(path: &str) -> Result<Self> {
+  pub fn from_file(path: PathBuf) -> Result<Self> {
     use std::fs::File;
     use std::io::Read;
 
@@ -87,7 +88,7 @@ impl TryFrom<&[u8]> for Png {
     let header = &bytes[0..8];
 
     if header != Self::STANDARD_HEADER {
-        return Err("Invalid PNG header".into());
+      return Err("Invalid PNG header".into());
     }
 
     let mut chunks = Vec::new();
@@ -100,7 +101,6 @@ impl TryFrom<&[u8]> for Png {
       index += chunk.as_bytes().len();
 
       chunks.push(chunk);
-
     }
 
     Ok(Self { chunks })
