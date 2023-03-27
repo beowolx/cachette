@@ -17,12 +17,11 @@ pub enum Commands {
     /// The PNG file to encode
     input: std::path::PathBuf,
 
+    /// The chunk type to use
+    chunk_type: String,
+
     /// The message to encode
     message: String,
-
-    /// The chunk type to use
-    #[clap(short, long, default_value = "tEXt")]
-    chunk_type: ChunkType,
   },
   /// Decode a message in a PNG file
   Decode {

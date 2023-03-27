@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use crate::chunk::Chunk;
 use crate::Error;
 use crate::Result;
+use crate::chunk_type::ChunkType;
 
 #[derive(Debug)]
 pub struct Png {
@@ -19,7 +20,7 @@ impl Png {
   }
 
   /// Creates a `Png` from a file path
-  pub fn from_file(path: PathBuf) -> Result<Self> {
+  pub fn from_file(path: &PathBuf) -> Result<Self> {
     use std::fs::File;
     use std::io::Read;
 
@@ -76,6 +77,23 @@ impl Png {
     }
 
     bytes
+  }
+
+  /// Encode a message into a PNG file and saves the result
+  pub fn encode_message(&mut self, message: &str, chunk_type: ChunkType) -> Result<()> {
+    let chunk = Chunk::new(chunk_type, message.as_bytes().to_vec());
+    self.append_chunk(chunk);
+    Ok(())
+  }
+
+  /// Save this `Png` to a file
+  pub fn save(&self, path: PathBuf) -> Result<()> {
+    use std::fs::File;
+    use std::io::Write;
+
+    let mut file = File::create(path)?;
+    file.write_all(self.as_bytes().as_ref())?;
+    Ok(())
   }
 }
 
