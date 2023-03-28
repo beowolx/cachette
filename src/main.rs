@@ -20,23 +20,16 @@ fn main() -> Result<()> {
       message,
       chunk_type,
     } => {
-      encode(input, &message, &chunk_type)?;
-      Ok(())
+      encode(input, &message, &chunk_type)
     }
     Commands::Decode { input, chunk_type } => {
-      decode(input, &chunk_type)?;
-      Ok(())
+      decode(input, &chunk_type)
     }
     Commands::Remove { input, chunk_type } => {
-      remove(input, &chunk_type)?;
-      Ok(())
+      remove(input, &chunk_type)
     }
     Commands::Print { input } => {
-      print(input)?;
-      Ok(())
-    }
-    _ => {
-      panic!("Unknown command");
+      print(input)
     }
   }
 }
