@@ -1,4 +1,3 @@
-use crate::chunk_type::ChunkType;
 use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
