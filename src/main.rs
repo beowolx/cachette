@@ -32,7 +32,8 @@ fn main() -> Result<()> {
       Ok(())
     }
     Commands::Print { input } => {
-      todo!();
+      print(input)?;
+      Ok(())
     }
     _ => {
       panic!("Unknown command");
@@ -71,5 +72,12 @@ fn remove(input: std::path::PathBuf, chunk_type: &str) -> Result<()> {
     None => println!("Chunk not found"),
   }
   png.save(input)?;
+  Ok(())
+}
+
+/// Prints the chunks of a PNG file
+fn print(input: std::path::PathBuf) -> Result<()> {
+  let png = Png::from_file(&input)?;
+  png.print_chunks();
   Ok(())
 }

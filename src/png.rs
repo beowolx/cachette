@@ -106,6 +106,13 @@ impl Png {
     file.write_all(self.as_bytes().as_ref())?;
     Ok(())
   }
+
+  /// Prints the contents of this `Png` to the console
+  pub fn print_chunks(&self) {
+    for chunk in &self.chunks {
+      println!("{}", chunk);
+    }
+  }
 }
 
 /// Attempts to create a `Png` from a byte sequence.
