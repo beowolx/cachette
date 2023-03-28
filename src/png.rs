@@ -2,9 +2,9 @@ use std::fmt;
 use std::path::PathBuf;
 
 use crate::chunk::Chunk;
+use crate::chunk_type::ChunkType;
 use crate::Error;
 use crate::Result;
-use crate::chunk_type::ChunkType;
 
 #[derive(Debug)]
 pub struct Png {
@@ -80,10 +80,21 @@ impl Png {
   }
 
   /// Encode a message into a PNG file and saves the result
-  pub fn encode_message(&mut self, message: &str, chunk_type: ChunkType) -> Result<()> {
+  pub fn encode_message(
+    &mut self,
+    message: &str,
+    chunk_type: ChunkType,
+  ) -> Result<()> {
     let chunk = Chunk::new(chunk_type, message.as_bytes().to_vec());
     self.append_chunk(chunk);
     Ok(())
+  }
+
+  /// Decode a message from a PNG file
+  pub fn decode_message(&self, chunk_type: &str) -> Result<String> {
+    let chunk = self.chunk_by_type(chunk_type).ok_or("Chunk not found")?;
+    let message = String::from_utf8(chunk.data().to_vec())?;
+    Ok(message)
   }
 
   /// Save this `Png` to a file
