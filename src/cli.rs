@@ -29,8 +29,7 @@ pub enum Commands {
     input: std::path::PathBuf,
 
     /// The chunk type to use
-    #[clap(short, long, default_value = "tEXt")]
-    chunk_type: ChunkType,
+    chunk_type: String,
   },
   /// Remove a message from a PNG file
   Remove {
@@ -38,8 +37,7 @@ pub enum Commands {
     input: std::path::PathBuf,
 
     /// The chunk type to use
-    #[clap(short, long, default_value = "tEXt")]
-    chunk_type: ChunkType,
+    chunk_type: String,
   },
   /// Print a message from a PNG file
   Print {

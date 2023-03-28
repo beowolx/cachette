@@ -1,8 +1,8 @@
-use std::str::FromStr;
 use chunk_type::ChunkType;
 use clap::Parser;
 use cli::{Cli, Commands};
 use png::Png;
+use std::str::FromStr;
 
 mod chunk;
 mod chunk_type;
@@ -24,7 +24,8 @@ fn main() -> Result<()> {
       Ok(())
     }
     Commands::Decode { input, chunk_type } => {
-      todo!();
+      decode(input, &chunk_type)?;
+      Ok(())
     }
     Commands::Remove { input, chunk_type } => {
       todo!();
@@ -38,11 +39,24 @@ fn main() -> Result<()> {
   }
 }
 
-// Encodes a message into a PNG file and saves the result
-fn encode(input: std::path::PathBuf, message: &str, chunk_type: &str) -> Result<()> {
+/// Encodes a message into a PNG file and saves the result
+fn encode(
+  input: std::path::PathBuf,
+  message: &str,
+  chunk_type: &str,
+) -> Result<()> {
   let mut png = Png::from_file(&input)?;
   let chunk_type = ChunkType::from_str(chunk_type)?;
   png.encode_message(message, chunk_type)?;
   png.save(input)?;
+  Ok(())
+}
+
+/// Decodes a message from a PNG file
+fn decode(input: std::path::PathBuf, chunk_type: &str) -> Result<()> {
+  let png = Png::from_file(&input)?;
+  let chunk_type = ChunkType::from_str(chunk_type)?;
+  let message = png.decode_message(&chunk_type.to_string())?;
+  println!("{}", message);
   Ok(())
 }
