@@ -28,7 +28,8 @@ fn main() -> Result<()> {
       Ok(())
     }
     Commands::Remove { input, chunk_type } => {
-      todo!();
+      remove(input, &chunk_type)?;
+      Ok(())
     }
     Commands::Print { input } => {
       todo!();
@@ -58,5 +59,17 @@ fn decode(input: std::path::PathBuf, chunk_type: &str) -> Result<()> {
   let chunk_type = ChunkType::from_str(chunk_type)?;
   let message = png.decode_message(&chunk_type.to_string())?;
   println!("{}", message);
+  Ok(())
+}
+
+/// Removes a chunk from a PNG file
+fn remove(input: std::path::PathBuf, chunk_type: &str) -> Result<()> {
+  let mut png = Png::from_file(&input)?;
+  let chunk_type = ChunkType::from_str(chunk_type)?;
+  match png.remove_chunk(&chunk_type.to_string()) {
+    Some(_) => println!("Chunk removed"),
+    None => println!("Chunk not found"),
+  }
+  png.save(input)?;
   Ok(())
 }
