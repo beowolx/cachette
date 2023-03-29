@@ -2,8 +2,19 @@
 name = "cachette"
 version = "0.1.0"
 edition = "2021"
+authors = ["Luis Cardoso <luis@luiscardoso.dev>"]
+description = "Cachette (hideout) is a Rust-based command-line interface (CLI) program that allows users to conceal secret messages in PNG image files using steganography."
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/LuisCardosoOliveira/cachette"
+keywords = ["steganography", "cli", "png", "hideout"]
+categories = ["cli", "png"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[profile.release]
+panic = "abort"
+lto = true # invokes the dark magic from LLVM's to link time optimizations (LTO)
+codegen-units=1 # optimise code gen size
+opt-level="s" # optimise for binary size
 
 [dependencies]
 clap = { version = "4.1.13", features = ["derive"] }
