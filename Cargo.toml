@@ -19,3 +19,7 @@ opt-level="s" # optimise for binary size
 [dependencies]
 clap = { version = "4.1.13", features = ["derive"] }
 crc = "3.0.1"
+
+[dev-dependencies]
+assert_cmd = "2.0.10"
+predicates = "3.0.2"
