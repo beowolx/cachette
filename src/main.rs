@@ -8,6 +8,7 @@ mod chunk_type;
 mod cli;
 mod png;
 mod png_ops;
+mod aes;
 
 pub type Error = Box<dyn std::error::Error>;
 pub type Result<T> = std::result::Result<T, Error>;
