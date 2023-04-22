@@ -3,12 +3,28 @@ use crate::png::Png;
 use crate::Result;
 use std::str::FromStr;
 
+fn get_password() -> Result<String> {
+  match rpassword::prompt_password("Your password: ") {
+    Ok(password) => {
+        if password.len() < 18 {
+            Err("Password must be at least 18 characters long".into())
+        } else {
+            Ok(password)
+        }
+    }
+    Err(_) => {
+        Err("Failed to read password".into())
+    },
+  }
+}
+
 /// Encodes a message into a PNG file and saves the result
 pub fn encode(
   input: std::path::PathBuf,
   message: &str,
   chunk_type: &str,
 ) -> Result<()> {
+  let password = get_password()?;
   let mut png = Png::from_file(&input)?;
   let chunk_type = ChunkType::from_str(chunk_type)?;
   png.encode_message(message, chunk_type)?;
