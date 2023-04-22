@@ -17,8 +17,10 @@ codegen-units=1 # optimise code gen size
 opt-level="s" # optimise for binary size
 
 [dependencies]
+aes-gcm = "0.10.1"
 clap = { version = "4.1.13", features = ["derive"] }
 crc = "3.0.1"
+rand = "0.8.5"
 
 [dev-dependencies]
 assert_cmd = "2.0.10"
