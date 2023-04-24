@@ -3,12 +3,12 @@ use clap::Parser;
 use cli::{Cli, Commands};
 use png_ops::{decode, encode, print_chunks, remove};
 
+mod aes;
 mod chunk;
 mod chunk_type;
 mod cli;
 mod png;
 mod png_ops;
-mod aes;
 
 pub type Error = Box<dyn std::error::Error>;
 pub type Result<T> = std::result::Result<T, Error>;
