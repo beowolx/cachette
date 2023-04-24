@@ -1,42 +1,48 @@
+use crate::aes::encrypt_message;
 use crate::chunk_type::ChunkType;
 use crate::png::Png;
 use crate::Result;
+use base64::{engine::general_purpose, Engine as _};
 use std::str::FromStr;
 
 fn get_password() -> Result<String> {
   match rpassword::prompt_password("Your password: ") {
     Ok(password) => {
-        if password.len() < 18 {
-            Err("Password must be at least 18 characters long".into())
-        } else {
-            Ok(password)
-        }
+      if password.len() < 18 {
+        Err("Password must be at least 18 characters long".into())
+      } else {
+        Ok(password)
+      }
     }
-    Err(_) => {
-        Err("Failed to read password".into())
-    },
+    Err(_) => Err("Failed to read password".into()),
   }
 }
 
-/// Encodes a message into a PNG file and saves the result
 pub fn encode(
   input: std::path::PathBuf,
   message: &str,
   chunk_type: &str,
 ) -> Result<()> {
   let password = get_password()?;
+  let (encrypted_message, nonce) = encrypt_message(message, &password);
   let mut png = Png::from_file(&input)?;
   let chunk_type = ChunkType::from_str(chunk_type)?;
-  png.encode_message(message, chunk_type)?;
+  let nonce_type = ChunkType::from_str("ncEX")?;
+
+  let base64_nonce = general_purpose::STANDARD_NO_PAD.encode(&nonce);
+  png.encode_message(encrypted_message, chunk_type)?;
+  png.encode_message(base64_nonce.into_bytes(), nonce_type)?;
+
   png.save(input)?;
   Ok(())
 }
 
 /// Decodes a message from a PNG file
 pub fn decode(input: std::path::PathBuf, chunk_type: &str) -> Result<()> {
+  let password = get_password()?;
   let png = Png::from_file(&input)?;
   let chunk_type = ChunkType::from_str(chunk_type)?;
-  let message = png.decode_message(&chunk_type.to_string())?;
+  let message = png.decode_message(&chunk_type.to_string(), &password)?;
   println!("{}", message);
   Ok(())
 }
