@@ -1,6 +1,10 @@
+use base64::{engine::general_purpose, Engine as _};
 use std::fmt;
 use std::path::PathBuf;
 
+use aes_gcm::aead::generic_array::GenericArray;
+
+use crate::aes::decrypt_message;
 use crate::chunk::Chunk;
 use crate::chunk_type::ChunkType;
 use crate::Error;
@@ -82,19 +86,36 @@ impl Png {
   /// Encode a message into a PNG file and saves the result
   pub fn encode_message(
     &mut self,
-    message: &str,
+    message: Vec<u8>,
     chunk_type: ChunkType,
   ) -> Result<()> {
-    let chunk = Chunk::new(chunk_type, message.as_bytes().to_vec());
+    let chunk = Chunk::new(chunk_type, message);
     self.append_chunk(chunk);
     Ok(())
   }
 
-  /// Decode a message from a PNG file
-  pub fn decode_message(&self, chunk_type: &str) -> Result<String> {
-    let chunk = self.chunk_by_type(chunk_type).ok_or("Chunk not found")?;
-    let message = String::from_utf8(chunk.data().to_vec())?;
-    Ok(message)
+  pub fn decode_message(
+    &self,
+    chunk_type: &str,
+    password: &str,
+  ) -> Result<String> {
+    let message_chunk = self
+      .chunk_by_type(chunk_type)
+      .ok_or("Message chunk not found")?;
+    let nonce_chunk =
+      self.chunk_by_type("ncEX").ok_or("Nonce chunk not found")?;
+
+    let base64_nonce = String::from_utf8(nonce_chunk.data().to_vec())?;
+    let decoded_nonce = general_purpose::STANDARD_NO_PAD
+      .decode(&base64_nonce)
+      .expect("base64 decode failed");
+
+    let nonce = GenericArray::from_slice(&decoded_nonce);
+
+    let ciphertext = &message_chunk.data()[..];
+    let decrypted_message = decrypt_message(ciphertext, password, &nonce);
+
+    Ok(decrypted_message)
   }
 
   /// Save this `Png` to a file
