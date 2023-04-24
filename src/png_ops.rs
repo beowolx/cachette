@@ -27,11 +27,12 @@ pub fn encode(
   let (encrypted_message, nonce) = encrypt_message(message, &password);
   let mut png = Png::from_file(&input)?;
   let chunk_type = ChunkType::from_str(chunk_type)?;
-  let nonce_type = ChunkType::from_str("ncEX")?;
+  let nonce_chunk_type_str = format!("n{}", &chunk_type.to_string()[1..]);
+  let nonce_chunk_type = ChunkType::from_str(&nonce_chunk_type_str)?;
 
   let base64_nonce = general_purpose::STANDARD_NO_PAD.encode(&nonce);
   png.encode_message(encrypted_message, chunk_type)?;
-  png.encode_message(base64_nonce.into_bytes(), nonce_type)?;
+  png.encode_message(base64_nonce.into_bytes(), nonce_chunk_type)?;
 
   png.save(input)?;
   Ok(())
