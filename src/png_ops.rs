@@ -5,17 +5,29 @@ use crate::Result;
 use base64::{engine::general_purpose, Engine as _};
 use std::str::FromStr;
 
+use std::env;
+
 fn get_password() -> Result<String> {
-  match rpassword::prompt_password("Your password: ") {
-    Ok(password) => {
-      if password.len() < 18 {
+    let password = match env::var("TEST_PASSWORD") {
+        Ok(val) => {
+            if val.is_empty() {
+                None
+            } else {
+                Some(val)
+            }
+        }
+        Err(_) => None,
+    };
+
+    let password = password.unwrap_or_else(|| {
+        rpassword::prompt_password("Your password: ").expect("Failed to read password")
+    });
+
+    if password.len() < 18 {
         Err("Password must be at least 18 characters long".into())
-      } else {
+    } else {
         Ok(password)
-      }
     }
-    Err(_) => Err("Failed to read password".into()),
-  }
 }
 
 pub fn encode(

@@ -8,6 +8,8 @@ const TEST_FILE_PATH: &str = "tests/cat.png";
 fn test_encode() -> Result<(), Box<dyn std::error::Error>> {
   let message = "This is a secret message";
   let chunk_type = "tEXt";
+  let password = "test_password_123456789";
+  std::env::set_var("TEST_PASSWORD", password);
   let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME")).unwrap();
 
   cmd
@@ -21,6 +23,8 @@ fn test_encode() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn test_decode() -> Result<(), Box<dyn std::error::Error>> {
   let chunk_type = "tEXt";
+  let password = "test_password_123456789";
+  std::env::set_var("TEST_PASSWORD", password);
   let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME")).unwrap();
 
   cmd
