@@ -89,6 +89,10 @@ impl Png {
     message: Vec<u8>,
     chunk_type: ChunkType,
   ) -> Result<()> {
+    // If the chunk already exists, remove it
+    if self.chunk_by_type(&chunk_type.to_string()).is_some() {
+      self.remove_chunk(&chunk_type.to_string());
+    }
     let chunk = Chunk::new(chunk_type, message);
     self.append_chunk(chunk);
     Ok(())
@@ -102,9 +106,10 @@ impl Png {
     let message_chunk = self
       .chunk_by_type(chunk_type)
       .ok_or("Message chunk not found")?;
-  let nonce_chunk_type = format!("n{}", &chunk_type.to_string()[1..]);
-    let nonce_chunk =
-      self.chunk_by_type(&nonce_chunk_type).ok_or("Nonce chunk not found")?;
+    let nonce_chunk_type = format!("n{}", &chunk_type.to_string()[1..]);
+    let nonce_chunk = self
+      .chunk_by_type(&nonce_chunk_type)
+      .ok_or("Nonce chunk not found")?;
 
     let base64_nonce = String::from_utf8(nonce_chunk.data().to_vec())?;
     let decoded_nonce = general_purpose::STANDARD_NO_PAD

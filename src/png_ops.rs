@@ -8,26 +8,27 @@ use std::str::FromStr;
 use std::env;
 
 fn get_password() -> Result<String> {
-    let password = match env::var("TEST_PASSWORD") {
-        Ok(val) => {
-            if val.is_empty() {
-                None
-            } else {
-                Some(val)
-            }
-        }
-        Err(_) => None,
-    };
-
-    let password = password.unwrap_or_else(|| {
-        rpassword::prompt_password("Your password: ").expect("Failed to read password")
-    });
-
-    if password.len() < 18 {
-        Err("Password must be at least 18 characters long".into())
-    } else {
-        Ok(password)
+  let password = match env::var("TEST_PASSWORD") {
+    Ok(val) => {
+      if val.is_empty() {
+        None
+      } else {
+        Some(val)
+      }
     }
+    Err(_) => None,
+  };
+
+  let password = password.unwrap_or_else(|| {
+    rpassword::prompt_password("Your password: ")
+      .expect("Failed to read password")
+  });
+
+  if password.len() < 18 {
+    Err("Password must be at least 18 characters long".into())
+  } else {
+    Ok(password)
+  }
 }
 
 pub fn encode(
